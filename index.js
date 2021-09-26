@@ -22,7 +22,7 @@ const probability_text = (text) =>  {
   let translate = [
       { 
         name: 'Plant type', 
-        value: '\n Tipo de Planta' 
+        value: 'Tipo de Planta\n\n' 
       },
       { 
         name: 'Negative event probability', 
@@ -46,11 +46,11 @@ const probability_text = (text) =>  {
       },
       {
         name: 'use', 
-        value: `\n\n*Se recomienda para mañana en las plantas tipo ${type} usar Invernadero.`
+        value: `\n\n*Se recomienda usar invernadero para mañana.`
       },
       {
         name: 'not use', 
-        value: `\n\n*Se recomienda para mañana en las plantas tipo ${type} no usar Invernadero.`
+        value: `\n\n*No se recomienda usar invernadero para mañana.`
       }
   ]
 
@@ -59,11 +59,12 @@ const probability_text = (text) =>  {
 
 bot.onText(/\/clima/, async data => {
   const { chat, text } = data
-  let msj = ''
+  let msj = 'Debes proporcionar un tipo de planta.'
   let type = text.split(' ')
   type = type[1]
   if (type) {
     if (plant_types.includes(type.toLocaleLowerCase())) {
+      msj = '';
       const params = {
         type, 
         header: '.table-impact-header',
@@ -103,8 +104,15 @@ bot.onText(/\/clima/, async data => {
       });
       msj += probability_text(data.useGreenhouse? 'use': 'not use')
     }else{
-      msj = 'Debes proporcionar el tipo de planta.';
+      msj = 'Debes proporcionar un tipo de planta valido.';
     }  
   }
   bot.sendMessage(chat.id, msj);
 });
+
+bot.setMyCommands([
+  {
+    command: "/clima",
+    description: "Con el comando /clima <tipo de planta>, obtienes la probabilidad para el dia de mañana.",
+  }
+]);
