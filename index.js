@@ -22,7 +22,7 @@ const probability_text = (text) =>  {
   let translate = [
       { 
         name: 'Plant type', 
-        value: 'Tipo de Planta\n\n' 
+        value: 'Tipo de Planta' 
       },
       { 
         name: 'Negative event probability', 
@@ -71,7 +71,23 @@ bot.onText(/\/clima/, async data => {
         content: '.table-impact-content',
         pathGreenHouse: '[src="assets/images/useGreenhouse.png"]'
       }
-      const browser = await puppeteer.launch();
+      //const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        headless: true,
+        ignoreDefaultArgs: ['--disable-extensions'],
+        args: [
+            '--disable-gpu',
+            '--disable-dev-shm-usage',
+            '--disable-setuid-sandbox',
+            '--no-first-run',
+            '--no-sandbox',
+            '--no-zygote',
+            '--single-process',
+        ]
+      });
+      // const browser = await puppeteer.launch({
+      //   executablePath: '/usr/bin/chromium-browser'
+      // })
       const page = await browser.newPage();
       
       await page.setDefaultNavigationTimeout(150000)
@@ -100,7 +116,7 @@ bot.onText(/\/clima/, async data => {
       
       data.probability.forEach(element => {
         const { name, value } = element
-        msj+= `${probability_text(name)}: ${value}.`
+        msj += `${probability_text(name)}: ${value}.`
       });
       msj += probability_text(data.useGreenhouse? 'use': 'not use')
     }else{
